@@ -5,7 +5,7 @@ def get_restaurants(event, context):
 
     YELP_APP_KEY = os.getenv('YELP_APP_KEY', None)
 
-    if YELP_APP_KEY is not None:
+    if YELP_APP_KEY is None:
         return {
             "statusCode": 200,
             "body": {
