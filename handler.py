@@ -3,6 +3,7 @@ import json
 import os
 import requests as req
 import urllib
+import psycopg2
 
 
 YELP_APP_KEY = os.getenv('YELP_APP_KEY', None)
@@ -24,7 +25,29 @@ def get_restaurants(search_term, latitude, longitude, radius=0):
         params=PARAMS
     )
 
-    return response
+    return response.json()
+
+
+def write_json_to_db(obj, table):
+    connect_str = "host={} dbname={} user={} password={}".format(
+        os.getenv('DB_HOST', ''),
+        os.getenv('DB_NAME', ''),
+        os.getenv('DB_USER', ''),
+        os.getenv('DB_PASSWD', ''),
+    )
+    conn = psycopg2.connect(connect_str)
+    cursor = conn.cursor()
+
+    sql_statement = """
+INSERT INTO {table}
+SELECT *
+FROM   json_populate_recordset(null::{table},
+          json json.dumps({obj}));
+    """.format(table=table, obj=obj)
+
+    cursor.execute()
+    conn.close()
+
 
 def main(event, context):
 
@@ -40,9 +63,12 @@ def main(event, context):
         }
 
     restaurants = get_restaurants(**event)
+    if restaurants['businesses'].__len__():
+        write_to_db(items=restaurants, json=True)
+
     response = {
         "statusCode": 200,
-        "body": restaurants.json()
+        "body": restaurants,
     }
 
     return response
