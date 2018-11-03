@@ -18,7 +18,7 @@ $ source env/bin/activate
 Install packages
 
 ```sh
-$ pip install -r requirements
+$ pip install -r requirements.txt
 ```
 
 ***REMOVED******REMOVED******REMOVED*** Run
