@@ -1,8 +1,6 @@
-import asyncio
 import json
 import os
 import requests as req
-import urllib
 import psycopg2
 
 from psycopg2.extensions import AsIs
@@ -59,15 +57,19 @@ VALUES ('{yelp_id}', '{name}', {rating}, {latitude}, {longitude}, '{phone}');
     """
 
     for item in obj:
-        cursor.execute(sql_statement.format(
-            table=AsIs(table),
-            yelp_id=item['id'],
-            name=item['name'],
-            rating=item['rating'],
-            latitude=item['latitude'],
-            longitude=item['longitude'],
-            phone=item['phone']
-        ))
+        try:
+            cursor.execute(sql_statement.format(
+                table=AsIs(table),
+                yelp_id=item['id'],
+                name=item['name'],
+                rating=item['rating'],
+                latitude=item['latitude'],
+                longitude=item['longitude'],
+                phone=item['phone']
+            ))
+        except psycopg2.IntegrityError:
+            pass
+    
     conn.close()
 
 
