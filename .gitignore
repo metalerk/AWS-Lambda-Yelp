@@ -1,4 +1,4 @@
-***REMOVED*** Distribution / packaging
+# Distribution / packaging
 .Python
 env/
 build/
@@ -17,5 +17,5 @@ var/
 *.egg
 __pycache__/
 
-***REMOVED*** Serverless directories
+# Serverless directories
 .serverless
